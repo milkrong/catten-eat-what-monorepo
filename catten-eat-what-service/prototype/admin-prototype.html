@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>猫咪吃什么 - 管理员界面原型</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --background: #ffffff;
+        --foreground: #09090b;
+        --muted: #f4f4f5;
+        --muted-foreground: #71717a;
+        --border: #e4e4e7;
+        --input: #e4e4e7;
+        --primary: #18181b;
+        --primary-foreground: #ffffff;
+        --secondary: #f4f4f5;
+        --secondary-foreground: #18181b;
+        --accent: #f4f4f5;
+        --accent-foreground: #18181b;
+        --destructive: #ef4444;
+        --destructive-foreground: #f9fafb;
+        --ring: #18181b;
+        --radius: 0.5rem;
+      }
+
+      .dark {
+        --background: #09090b;
+        --foreground: #ffffff;
+        --muted: #27272a;
+        --muted-foreground: #a1a1aa;
+        --border: #27272a;
+        --input: #27272a;
+        --primary: #ffffff;
+        --primary-foreground: #09090b;
+        --secondary: #27272a;
+        --secondary-foreground: #ffffff;
+        --accent: #27272a;
+        --accent-foreground: #ffffff;
+        --destructive: #7f1d1d;
+        --destructive-foreground: #f9fafb;
+        --ring: #d4d4d8;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--foreground);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .admin-container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 240px;
+        background-color: var(--background);
+        border-right: 1px solid var(--border);
+        padding: 16px 0;
+        flex-shrink: 0;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+      }
+
+      .sidebar-header {
+        padding: 0 16px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-header h1 {
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        color: var(--foreground);
+      }
+
+      .sidebar-header h1 span {
+        margin-left: 8px;
+      }
+
+      .sidebar-menu {
+        margin-top: 16px;
+        padding: 0 8px;
+      }
+
+      .menu-item {
+        padding: 8px 12px;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: background-color 0.2s, color 0.2s;
+        color: var(--muted-foreground);
+        font-size: 14px;
+      }
+
+      .menu-item:hover {
+        background-color: var(--muted);
+        color: var(--foreground);
+      }
+
+      .menu-item.active {
+        background-color: var(--muted);
+        color: var(--foreground);
+        font-weight: 500;
+      }
+
+      .menu-item i {
+        margin-right: 12px;
+        font-size: 18px;
+      }
+
+      .main-content {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+        background-color: var(--muted);
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .content-header h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--foreground);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius);
+        font-size: 14px;
+        font-weight: 500;
+        height: 40px;
+        padding: 0 16px;
+        transition: all 0.2s;
+        cursor: pointer;
+        white-space: nowrap;
+        border: none;
+      }
+
+      .button-primary {
+        background-color: var(--foreground);
+        color: var(--background);
+      }
+
+      .button-primary:hover {
+        opacity: 0.9;
+      }
+
+      .button-outline {
+        background-color: transparent;
+        color: var(--foreground);
+        border: 1px solid var(--border);
+      }
+
+      .button-outline:hover {
+        background-color: var(--muted);
+      }
+
+      .button-secondary {
+        background-color: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+
+      .button-destructive {
+        background-color: var(--destructive);
+        color: var(--destructive-foreground);
+      }
+
+      .button-ghost {
+        background-color: transparent;
+      }
+
+      .button-ghost:hover {
+        background-color: var(--muted);
+      }
+
+      .button-sm {
+        height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+      }
+
+      .button i {
+        margin-right: 6px;
+        font-size: 16px;
+      }
+
+      .card {
+        background-color: var(--background);
+        border-radius: var(--radius);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .stat-card {
+        background-color: var(--background);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-title {
+        font-size: 13px;
+        color: var(--muted-foreground);
+        margin-bottom: 8px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--foreground);
+      }
+
+      .stat-trend {
+        font-size: 13px;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+      }
+
+      .stat-trend.positive {
+        color: #22c55e;
+      }
+
+      .stat-trend.negative {
+        color: #ef4444;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        font-weight: 500;
+        color: var(--muted-foreground);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover {
+        background-color: var(--muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        padding: 2px 8px;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .badge-primary {
+        background-color: #f0f9ff;
+        color: #0ea5e9;
+      }
+
+      .badge-secondary {
+        background-color: #f1f5f9;
+        color: #64748b;
+      }
+
+      .badge-success {
+        background-color: #f0fdf4;
+        color: #22c55e;
+      }
+
+      .badge-warning {
+        background-color: #fffbeb;
+        color: #f59e0b;
+      }
+
+      .badge-danger {
+        background-color: #fef2f2;
+        color: #ef4444;
+      }
+
+      .action-cell {
+        display: flex;
+        gap: 8px;
+      }
+
+      .icon-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius);
+        background-color: transparent;
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        border: none;
+      }
+
+      .icon-button:hover {
+        background-color: var(--muted);
+        color: var(--foreground);
+      }
+
+      .search-filter {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .input-wrapper {
+        flex: 1;
+        position: relative;
+      }
+
+      .input {
+        width: 100%;
+        height: 40px;
+        padding: 0 16px;
+        background-color: var(--background);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--foreground);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .input:focus {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 1px var(--ring);
+      }
+
+      .input-with-icon {
+        padding-left: 40px;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted-foreground);
+        pointer-events: none;
+      }
+
+      select.input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        padding-right: 40px;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 20px;
+      }
+
+      .tab {
+        padding: 12px 16px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        color: var(--muted-foreground);
+        font-weight: 500;
+        transition: color 0.2s, border-color 0.2s;
+      }
+
+      .tab:hover {
+        color: var(--foreground);
+      }
+
+      .tab.active {
+        border-bottom-color: var(--foreground);
+        color: var(--foreground);
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+        gap: 4px;
+      }
+
+      .pagination-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background-color: var(--background);
+        color: var(--foreground);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 14px;
+        padding: 0 8px;
+      }
+
+      .pagination-item.active {
+        background-color: var(--foreground);
+        color: var(--background);
+        border-color: var(--foreground);
+      }
+
+      .pagination-item:hover:not(.active) {
+        background-color: var(--muted);
+      }
+
+      .vector-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        background-color: var(--background);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        margin-bottom: 12px;
+      }
+
+      .vector-icon {
+        width: 48px;
+        height: 48px;
+        background-color: var(--muted);
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .vector-info {
+        flex: 1;
+      }
+
+      .vector-title {
+        font-weight: 500;
+        margin-bottom: 4px;
+        color: var(--foreground);
+      }
+
+      .vector-meta {
+        font-size: 13px;
+        color: var(--muted-foreground);
+      }
+
+      .vector-status {
+        font-size: 13px;
+        min-width: 100px;
+      }
+
+      .dialog-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+      }
+
+      .dialog {
+        background-color: var(--background);
+        border-radius: var(--radius);
+        width: 500px;
+        max-width: 90%;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.2s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .dialog-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .dialog-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--foreground);
+      }
+
+      .dialog-body {
+        padding: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--foreground);
+        font-size: 14px;
+      }
+
+      .dialog-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .checkbox {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+      }
+
+      .progress-bar {
+        height: 8px;
+        background-color: var(--muted);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-value {
+        height: 100%;
+        background-color: #22c55e;
+        transition: width 0.3s ease;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background-color: var(--foreground);
+        color: var(--background);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        border: none;
+        transition: all 0.2s;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 1024px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 80px;
+        }
+
+        .sidebar-header h1 span,
+        .menu-item span {
+          display: none;
+        }
+
+        .menu-item i {
+          margin-right: 0;
+          font-size: 20px;
+        }
+
+        .menu-item {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .content-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h1>🐱 <span>猫咪吃什么</span></h1>
+        </div>
+        <div class="sidebar-menu">
+          <div class="menu-item">
+            <i>📊</i>
+            <span>仪表盘</span>
+          </div>
+          <div class="menu-item active">
+            <i>🍲</i>
+            <span>食谱管理</span>
+          </div>
+          <div class="menu-item">
+            <i>📈</i>
+            <span>向量数据库</span>
+          </div>
+          <div class="menu-item">
+            <i>👥</i>
+            <span>用户管理</span>
+          </div>
+          <div class="menu-item">
+            <i>📅</i>
+            <span>膳食计划</span>
+          </div>
+          <div class="menu-item">
+            <i>⚙️</i>
+            <span>系统设置</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="content-header">
+          <h2>食谱管理</h2>
+          <button class="button button-primary"><i>+</i> 添加新食谱</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">食谱总数</div>
+            <div class="stat-value">1,248</div>
+            <div class="stat-trend positive"><i>↑</i> 增加 24 (2%)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">已向量化</div>
+            <div class="stat-value">1,187</div>
+            <div class="stat-trend positive"><i>↑</i> 完成 95%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">本周新增</div>
+            <div class="stat-value">37</div>
+            <div class="stat-trend positive"><i>↑</i> 增加 5 (15%)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">待审核</div>
+            <div class="stat-value">18</div>
+            <div class="stat-trend negative"><i>↑</i> 增加 7 (63%)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="tabs">
+            <div class="tab active">全部食谱</div>
+            <div class="tab">待向量化</div>
+            <div class="tab">已向量化</div>
+            <div class="tab">推荐中</div>
+          </div>
+
+          <div class="search-filter">
+            <div class="input-wrapper">
+              <span class="input-icon">🔍</span>
+              <input
+                type="text"
+                class="input input-with-icon"
+                placeholder="搜索食谱名称、ID或标签..."
+              />
+            </div>
+            <div>
+              <select class="input">
+                <option>所有分类</option>
+                <option>早餐</option>
+                <option>午餐</option>
+                <option>晚餐</option>
+                <option>小食</option>
+              </select>
+            </div>
+            <div>
+              <select class="input">
+                <option>所有状态</option>
+                <option>已发布</option>
+                <option>草稿</option>
+                <option>已归档</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 0; overflow: hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>食谱名称</th>
+                  <th>分类</th>
+                  <th>创建时间</th>
+                  <th>向量状态</th>
+                  <th>推荐状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>REC-1001</td>
+                  <td>香煎三文鱼配芦笋</td>
+                  <td>晚餐, 高蛋白</td>
+                  <td>2023-06-12</td>
+                  <td><span class="badge badge-success">已向量化</span></td>
+                  <td><span class="badge badge-primary">今日推荐</span></td>
+                  <td class="action-cell">
+                    <button class="icon-button">✏️</button>
+                    <button class="icon-button">📊</button>
+                    <button class="icon-button">🗑️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>REC-1002</td>
+                  <td>彩虹蔬菜沙拉</td>
+                  <td>午餐, 素食</td>
+                  <td>2023-06-10</td>
+                  <td><span class="badge badge-success">已向量化</span></td>
+                  <td><span class="badge badge-secondary">未推荐</span></td>
+                  <td class="action-cell">
+                    <button class="icon-button">✏️</button>
+                    <button class="icon-button">📊</button>
+                    <button class="icon-button">🗑️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>REC-1003</td>
+                  <td>番茄牛肉意面</td>
+                  <td>晚餐</td>
+                  <td>2023-06-09</td>
+                  <td><span class="badge badge-success">已向量化</span></td>
+                  <td><span class="badge badge-primary">相似推荐</span></td>
+                  <td class="action-cell">
+                    <button class="icon-button">✏️</button>
+                    <button class="icon-button">📊</button>
+                    <button class="icon-button">🗑️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>REC-1004</td>
+                  <td>蓝莓燕麦早餐碗</td>
+                  <td>早餐, 素食</td>
+                  <td>2023-06-08</td>
+                  <td><span class="badge badge-success">已向量化</span></td>
+                  <td><span class="badge badge-primary">今日推荐</span></td>
+                  <td class="action-cell">
+                    <button class="icon-button">✏️</button>
+                    <button class="icon-button">📊</button>
+                    <button class="icon-button">🗑️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>REC-1005</td>
+                  <td>口水鸡</td>
+                  <td>午餐, 中式</td>
+                  <td>2023-06-06</td>
+                  <td><span class="badge badge-warning">待向量化</span></td>
+                  <td><span class="badge badge-secondary">未推荐</span></td>
+                  <td class="action-cell">
+                    <button class="icon-button">✏️</button>
+                    <button class="icon-button">📊</button>
+                    <button class="icon-button">🗑️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>REC-1006</td>
+                  <td>日式照烧鸡腿饭</td>
+                  <td>晚餐, 日式</td>
+                  <td>2023-06-05</td>
+                  <td><span class="badge badge-danger">向量化失败</span></td>
+                  <td><span class="badge badge-secondary">未推荐</span></td>
+                  <td class="action-cell">
+                    <button class="icon-button">✏️</button>
+                    <button class="icon-button">📊</button>
+                    <button class="icon-button">🗑️</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <button class="pagination-item">
+              <i>«</i>
+            </button>
+            <button class="pagination-item active">1</button>
+            <button class="pagination-item">2</button>
+            <button class="pagination-item">3</button>
+            <button class="pagination-item">4</button>
+            <button class="pagination-item">
+              <i>»</i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="content-header" style="margin-bottom: 16px">
+            <h2 style="font-size: 20px">向量数据库状态</h2>
+            <button class="button button-outline"><i>🔄</i> 重新向量化</button>
+          </div>
+
+          <div class="vector-card">
+            <div class="vector-icon">🧮</div>
+            <div class="vector-info">
+              <div class="vector-title">今日向量化任务</div>
+              <div class="vector-meta">
+                总计 48 个食谱, 完成 45 个, 3 个失败
+              </div>
+              <div style="margin-top: 8px">
+                <div class="progress-bar">
+                  <div class="progress-value" style="width: 93.75%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="vector-status">
+              <span class="badge badge-success">93.75% 完成</span>
+            </div>
+            <div>
+              <button class="button button-sm button-outline">详情</button>
+            </div>
+          </div>
+
+          <div class="vector-card">
+            <div class="vector-icon">🔎</div>
+            <div class="vector-info">
+              <div class="vector-title">推荐引擎状态</div>
+              <div class="vector-meta">
+                上次更新: 2023-06-15 08:30, 包含 1,187 个食谱向量
+              </div>
+            </div>
+            <div class="vector-status">
+              <span class="badge badge-success">运行中</span>
+            </div>
+            <div>
+              <button class="button button-sm button-outline">详情</button>
+            </div>
+          </div>
+
+          <div class="vector-card">
+            <div class="vector-icon">📈</div>
+            <div class="vector-info">
+              <div class="vector-title">向量空间统计</div>
+              <div class="vector-meta">
+                维度: 1536, 聚类: 24个, 平均相似度: 0.72
+              </div>
+            </div>
+            <div class="vector-status">
+              <span class="badge badge-success">良好</span>
+            </div>
+            <div>
+              <button class="button button-sm button-outline">详情</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <!-- 添加食谱的对话框 -->
+    <div class="dialog-overlay" style="display: none">
+      <div class="dialog">
+        <div class="dialog-header">
+          <h3>添加新食谱</h3>
+          <button class="icon-button">✖️</button>
+        </div>
+        <div class="dialog-body">
+          <div class="form-group">
+            <label class="form-label">食谱名称</label>
+            <input type="text" class="input" placeholder="输入食谱名称" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">分类</label>
+            <select class="input">
+              <option>早餐</option>
+              <option>午餐</option>
+              <option>晚餐</option>
+              <option>小食</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">烹饪时间（分钟）</label>
+            <input type="number" class="input" placeholder="例如: 30" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">卡路里</label>
+            <input type="number" class="input" placeholder="例如: 350" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">描述</label>
+            <textarea
+              class="input"
+              style="min-height: 100px; resize: vertical"
+              placeholder="输入食谱描述..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">向量化选项</label>
+            <div class="checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="auto-vectorize"
+                class="checkbox"
+                checked
+              />
+              <label for="auto-vectorize">自动向量化</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="add-to-recommendations"
+                class="checkbox"
+                checked
+              />
+              <label for="add-to-recommendations">添加到推荐池</label>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <button class="button button-outline">取消</button>
+          <button class="button button-primary">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        document.querySelector(".theme-toggle").textContent =
+          document.body.classList.contains("dark") ? "☀️" : "🌙";
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+
+# Environment variables
+.env*
+!.env.example
+
+# Development files
+*.log
+.vscode
+*.md
+api.http
+codebase_search
+run_terminal_cmd
+
+# Build outputs
+dist
+build
+coverage
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Data volumes
+ollama_data 

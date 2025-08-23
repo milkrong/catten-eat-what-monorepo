@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>猫咪吃什么 - 个人中心</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+      }
+
+      .phone-container {
+        width: 375px;
+        height: 812px;
+        margin: 20px auto;
+        background-color: white;
+        border-radius: 40px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 10px solid #333;
+      }
+
+      .status-bar {
+        height: 44px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        font-size: 12px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+      }
+
+      .status-bar .time {
+        font-weight: bold;
+      }
+
+      .main-content {
+        height: calc(100% - 44px - 70px);
+        overflow-y: auto;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      .tab-bar {
+        height: 70px;
+        background-color: #fff;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-top: 1px solid #eee;
+      }
+
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+        width: 25%;
+        color: #999;
+        padding: 8px 0;
+      }
+
+      .tab-item.active {
+        color: #ff6b6b;
+      }
+
+      .tab-icon {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .profile-header {
+        background-color: #fff;
+        padding: 20px 15px;
+        display: flex;
+        position: relative;
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
+        background-color: #eee;
+        background-size: cover;
+        background-position: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+        background-image: url("https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80");
+      }
+
+      .profile-info {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .profile-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .profile-bio {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .edit-profile-btn {
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        font-size: 12px;
+        padding: 5px 12px;
+        background: none;
+        color: #666;
+        align-self: flex-start;
+      }
+
+      .settings-btn {
+        position: absolute;
+        top: 20px;
+        right: 15px;
+        font-size: 24px;
+        color: #666;
+      }
+
+      .stats-section {
+        display: flex;
+        background-color: #fff;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .stat-item {
+        flex: 1;
+        text-align: center;
+        border-right: 1px solid #eee;
+      }
+
+      .stat-item:last-child {
+        border-right: none;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #ff6b6b;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 15px 15px 10px;
+        color: #666;
+      }
+
+      .menu-list {
+        background-color: #fff;
+        margin-bottom: 10px;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #f1f1f1;
+      }
+
+      .menu-item:last-child {
+        border-bottom: none;
+      }
+
+      .menu-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        color: #ff6b6b;
+        font-size: 14px;
+      }
+
+      .menu-label {
+        flex-grow: 1;
+        font-size: 14px;
+      }
+
+      .menu-value {
+        font-size: 14px;
+        color: #999;
+        margin-right: 5px;
+      }
+
+      .menu-arrow {
+        color: #ccc;
+        font-size: 20px;
+      }
+
+      .preferences-section {
+        background-color: #fff;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .preference-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .preference-title {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .edit-btn {
+        font-size: 13px;
+        color: #ff6b6b;
+      }
+
+      .preference-chips {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .preference-chip {
+        padding: 6px 12px;
+        background-color: #f8f8f8;
+        border-radius: 15px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #666;
+        border: 1px solid #eee;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 20px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #ff6b6b;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(16px);
+      }
+
+      .logout-btn {
+        background-color: #fff;
+        color: #ff6b6b;
+        border: none;
+        width: 100%;
+        padding: 15px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .favorites-section {
+        margin: 15px 0;
+      }
+
+      .favorites-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        margin-bottom: 10px;
+      }
+
+      .see-all {
+        font-size: 13px;
+        color: #999;
+      }
+
+      .favorites-row {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 15px 10px;
+      }
+
+      .favorite-card {
+        width: 120px;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-right: 10px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .favorite-image {
+        width: 120px;
+        height: 90px;
+        background-color: #eee;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .favorite-content {
+        padding: 8px;
+      }
+
+      .favorite-title {
+        font-size: 12px;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .favorite-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: #999;
+        margin-top: 5px;
+      }
+
+      .empty-box {
+        height: 20px;
+      }
+
+      /* Utility classes */
+      .icon {
+        font-family: "Material Icons";
+        font-style: normal;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="phone-container">
+      <div class="status-bar">
+        <div class="time">12:30</div>
+        <div class="icons">
+          <span class="icon">signal_cellular_alt</span>
+          <span class="icon">wifi</span>
+          <span class="icon">battery_full</span>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="profile-header">
+          <div class="profile-avatar"></div>
+          <div class="profile-info">
+            <div class="profile-name">李小猫</div>
+            <div class="profile-bio">热爱美食和健康生活的猫咪</div>
+            <button class="edit-profile-btn">编辑资料</button>
+          </div>
+          <div class="settings-btn">
+            <i class="icon">settings</i>
+          </div>
+        </div>
+
+        <div class="stats-section">
+          <div class="stat-item">
+            <div class="stat-value">127</div>
+            <div class="stat-label">收藏</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">48</div>
+            <div class="stat-label">已完成</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">15</div>
+            <div class="stat-label">计划</div>
+          </div>
+        </div>
+
+        <div class="favorites-section">
+          <div class="favorites-header">
+            <div class="section-title">我的收藏</div>
+            <div class="see-all">查看全部 ></div>
+          </div>
+
+          <div class="favorites-row">
+            <div class="favorite-card">
+              <div
+                class="favorite-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="favorite-content">
+                <div class="favorite-title">法式烩牛肉</div>
+                <div class="favorite-info">
+                  <span>45分钟</span>
+                  <span>420卡</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="favorite-card">
+              <div
+                class="favorite-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1484980972926-edee96e0960d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="favorite-content">
+                <div class="favorite-title">鲜虾牛油果沙拉</div>
+                <div class="favorite-info">
+                  <span>20分钟</span>
+                  <span>280卡</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="favorite-card">
+              <div
+                class="favorite-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="favorite-content">
+                <div class="favorite-title">泰式青咖喱鸡</div>
+                <div class="favorite-info">
+                  <span>35分钟</span>
+                  <span>350卡</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="favorite-card">
+              <div
+                class="favorite-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="favorite-content">
+                <div class="favorite-title">肉桂苹果派</div>
+                <div class="favorite-info">
+                  <span>60分钟</span>
+                  <span>380卡</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preferences-section">
+          <div class="preference-header">
+            <div class="preference-title">饮食偏好</div>
+            <div class="edit-btn">编辑</div>
+          </div>
+
+          <div class="preference-chips">
+            <div class="preference-chip">低脂</div>
+            <div class="preference-chip">高蛋白</div>
+            <div class="preference-chip">地中海饮食</div>
+            <div class="preference-chip">无麸质</div>
+            <div class="preference-chip">少盐</div>
+          </div>
+        </div>
+
+        <div class="preferences-section">
+          <div class="preference-header">
+            <div class="preference-title">食材禁忌</div>
+            <div class="edit-btn">编辑</div>
+          </div>
+
+          <div class="preference-chips">
+            <div class="preference-chip">花生</div>
+            <div class="preference-chip">海鲜</div>
+          </div>
+        </div>
+
+        <div class="section-title">设置</div>
+        <div class="menu-list">
+          <div class="menu-item">
+            <div class="menu-icon">
+              <i class="icon">notifications</i>
+            </div>
+            <div class="menu-label">通知提醒</div>
+            <label class="switch">
+              <input type="checkbox" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-icon">
+              <i class="icon">language</i>
+            </div>
+            <div class="menu-label">语言</div>
+            <div class="menu-value">简体中文</div>
+            <i class="icon menu-arrow">chevron_right</i>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-icon">
+              <i class="icon">format_size</i>
+            </div>
+            <div class="menu-label">字体大小</div>
+            <div class="menu-value">中</div>
+            <i class="icon menu-arrow">chevron_right</i>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-icon">
+              <i class="icon">help_outline</i>
+            </div>
+            <div class="menu-label">帮助与反馈</div>
+            <i class="icon menu-arrow">chevron_right</i>
+          </div>
+
+          <div class="menu-item">
+            <div class="menu-icon">
+              <i class="icon">info_outline</i>
+            </div>
+            <div class="menu-label">关于我们</div>
+            <i class="icon menu-arrow">chevron_right</i>
+          </div>
+        </div>
+
+        <button class="logout-btn">退出登录</button>
+
+        <div class="empty-box"></div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item">
+          <i class="icon tab-icon">home</i>
+          <span>首页</span>
+        </div>
+        <div class="tab-item">
+          <i class="icon tab-icon">restaurant_menu</i>
+          <span>食谱</span>
+        </div>
+        <div class="tab-item">
+          <i class="icon tab-icon">calendar_today</i>
+          <span>计划</span>
+        </div>
+        <div class="tab-item active">
+          <i class="icon tab-icon">person</i>
+          <span>我的</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

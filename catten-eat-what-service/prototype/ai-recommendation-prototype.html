@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>猫咪吃什么 - AI推荐</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        gap: 40px;
+      }
+
+      .phone-container {
+        width: 375px;
+        height: 812px;
+        margin: 20px auto;
+        background-color: white;
+        border-radius: 40px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 10px solid #333;
+      }
+
+      .status-bar {
+        height: 44px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        font-size: 12px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+      }
+
+      .status-bar .time {
+        font-weight: bold;
+      }
+
+      .header {
+        padding: 15px;
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+      }
+
+      .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .main-content {
+        height: calc(100% - 44px - 70px);
+        overflow-y: auto;
+        padding: 15px;
+      }
+
+      /* Form Screen Styles */
+      .form-group {
+        background: #fff;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .form-input::placeholder {
+        color: #999;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        background-color: white;
+      }
+
+      .tag-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .tag {
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        background-color: #f5f5f5;
+        color: #666;
+        cursor: pointer;
+      }
+
+      .tag.active {
+        background-color: #ff6b6b;
+        color: white;
+      }
+
+      .submit-btn {
+        width: 100%;
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      /* Result Screen Styles */
+      .result-card {
+        background: white;
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .result-title {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .result-meta {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .result-content {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .result-image {
+        width: 100%;
+        height: 200px;
+        border-radius: 12px;
+        background-size: cover;
+        background-position: center;
+        margin: 10px 0;
+      }
+
+      .result-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .result-tag {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        background-color: #f5f5f5;
+        color: #666;
+      }
+
+      /* Icons */
+      .icon {
+        font-family: "Material Icons";
+        font-style: normal;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Form-based Screen -->
+    <div class="phone-container">
+      <div class="status-bar">
+        <div class="time">12:30</div>
+        <div class="icons">
+          <span class="icon">signal_cellular_alt</span>
+          <span class="icon">wifi</span>
+          <span class="icon">battery_full</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="page-title">AI推荐</div>
+      </div>
+
+      <div class="main-content">
+        <form>
+          <div class="form-group">
+            <div class="form-label">推荐类型</div>
+            <select class="form-select">
+              <option value="single">单餐推荐</option>
+              <option value="daily">每日推荐</option>
+              <option value="weekly">每周推荐</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">饮食偏好</div>
+            <div class="tag-group">
+              <div class="tag active">清淡</div>
+              <div class="tag">低脂</div>
+              <div class="tag">高蛋白</div>
+              <div class="tag">素食</div>
+              <div class="tag">无麸质</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">卡路里限制</div>
+            <input type="number" class="form-input" placeholder="请输入每餐期望的卡路里" />
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">烹饪时间</div>
+            <select class="form-select">
+              <option value="15">15分钟以内</option>
+              <option value="30">30分钟以内</option>
+              <option value="60">1小时以内</option>
+              <option value="any">无所谓</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">食材偏好</div>
+            <input type="text" class="form-input" placeholder="输入喜欢的食材，用逗号分隔" />
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">忌口食材</div>
+            <input type="text" class="form-input" placeholder="输入不喜欢的食材，用逗号分隔" />
+          </div>
+
+          <button class="submit-btn">开始推荐</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="phone-container">
+      <div class="status-bar">
+        <div class="time">12:30</div>
+        <div class="icons">
+          <span class="icon">signal_cellular_alt</span>
+          <span class="icon">wifi</span>
+          <span class="icon">battery_full</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="page-title">推荐结果</div>
+      </div>
+
+      <div class="main-content">
+        <div class="result-card">
+          <div class="result-header">
+            <div class="result-title">每日推荐方案</div>
+            <div class="result-meta">基于您的饮食偏好生成</div>
+          </div>
+
+          <div class="result-content">
+            <div class="result-image" style="background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"></div>
+            
+            <h3>早餐 (320卡路里)</h3>
+            <p>燕麦牛奶配水煮蛋</p>
+            <div class="result-tags">
+              <span class="result-tag">高蛋白</span>
+              <span class="result-tag">15分钟</span>
+              <span class="result-tag">简单</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-content">
+            <div class="result-image" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"></div>
+            
+            <h3>午餐 (450卡路里)</h3>
+            <p>藜麦鸡胸沙拉</p>
+            <div class="result-tags">
+              <span class="result-tag">低脂</span>
+              <span class="result-tag">20分钟</span>
+              <span class="result-tag">营养均衡</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-content">
+            <div class="result-image" style="background-image: url('https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"></div>
+            
+            <h3>晚餐 (380卡路里)</h3>
+            <p>清蒸鲈鱼配西兰花</p>
+            <div class="result-tags">
+              <span class="result-tag">清淡</span>
+              <span class="result-tag">30分钟</span>
+              <span class="result-tag">高蛋白</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn">保存推荐方案</button>
+      </div>
+    </div>
+  </body>
+</html> 

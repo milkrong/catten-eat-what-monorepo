@@ -1,0 +1,241 @@
+# 系统架构图
+direction: right
+
+# 定义样式
+styles: {
+  api: {
+    style: {
+      fill: "#c8e6c9"
+      border-radius: 10
+    }
+  }
+  service: {
+    style: {
+      fill: "#bbdefb"
+      border-radius: 10
+    }
+  }
+  db: {
+    style: {
+      fill: "#ffecb3"
+      border-radius: 10
+    }
+  }
+  auth: {
+    style: {
+      fill: "#f8bbd0"
+      border-radius: 10
+    }
+  }
+}
+
+# 客户端层
+client: {
+  shape: rectangle
+  label: Client
+}
+
+# API 层
+api: {
+  style.fill: "#c8e6c9"
+  style.border-radius: 10
+  label: "API Layer"
+
+  auth_routes: {
+    shape: rectangle
+    style.multiple: true
+    label: "Auth Routes"
+  }
+
+  meal_plan_routes: {
+    shape: rectangle
+    style.multiple: true
+    label: "Meal Plan Routes"
+  }
+
+  recipe_routes: {
+    shape: rectangle
+    style.multiple: true
+    label: "Recipe Routes"
+  }
+
+  user_routes: {
+    shape: rectangle
+    style.multiple: true
+    label: "User Routes"
+  }
+
+  recommendation_routes: {
+    shape: rectangle
+    style.multiple: true
+    label: "Recommendation Routes"
+  }
+}
+
+# 服务层
+services: {
+  style.fill: "#bbdefb"
+  style.border-radius: 10
+  label: "Services Layer"
+
+  user_service: {
+    label: "User Service"
+  }
+  meal_plan_service: {
+    label: "Meal Plan Service"
+  }
+  recipe_service: {
+    label: "Recipe Service"
+  }
+  recommendation_service: {
+    label: "Recommendation Service"
+  }
+  image_service: {
+    label: "Image Service"
+  }
+  cache_service: {
+    label: "Cache Service"
+    warmup: {
+      label: "Cache Warmup"
+    }
+    scheduler: {
+      label: "Warmup Scheduler"
+    }
+  }
+  ai_services: {
+    label: "AI Services"
+    coze: {
+      label: "Coze Service"
+    }
+    openai: {
+      label: "OpenAI Service"
+    }
+    ollama: {
+      label: "Ollama Service"
+    }
+  }
+}
+
+# 数据库层
+database: {
+  style.fill: "#ffecb3"
+  style.border-radius: 10
+  label: "Database"
+  
+  profiles: {
+    shape: sql_table
+    label: "Profiles"
+    id: "uuid {constraint: primary_key}"
+    username: "text"
+    avatar_url: "text"
+    created_at: "timestamp"
+    updated_at: "timestamp"
+  }
+
+  preferences: {
+    shape: sql_table
+    label: "Preferences"
+    id: "uuid {constraint: primary_key}"
+    diet_type: "text[]"
+    restrictions: "text[]"
+    allergies: "text[]"
+    calories_min: "int"
+    calories_max: "int"
+    max_cooking_time: "int"
+    cuisine_type: "text[]"
+    meals_per_day: "int"
+  }
+
+  recipes: {
+    shape: sql_table
+    label: "Recipes"
+    id: "uuid {constraint: primary_key}"
+    name: "text"
+    description: "text"
+    ingredients: "jsonb"
+    cooking_steps: "jsonb"
+    calories: "int"
+    cooking_time: "int"
+    nutrition_facts: "jsonb"
+    cuisine_type: "text"
+    diet_type: "text[]"
+    created_by: "uuid"
+    views: "int"
+    img: "text"
+  }
+
+  meal_plans: {
+    shape: sql_table
+    label: "Meal Plans"
+    id: "uuid {constraint: primary_key}"
+    user_id: "uuid"
+    date: "date"
+    meal_type: "text"
+    recipe_id: "uuid"
+  }
+
+  favorites: {
+    shape: sql_table
+    label: "Favorites"
+    id: "uuid {constraint: primary_key}"
+    user_id: "uuid"
+    recipe_id: "uuid"
+  }
+
+  settings: {
+    shape: sql_table
+    label: "Settings"
+    id: "uuid {constraint: primary_key}"
+    user_id: "uuid"
+    llm_service: "text"
+    model_name: "text"
+    is_paid: "boolean"
+    api_key: "text"
+    api_endpoint: "text"
+  }
+}
+
+# 外部服务
+external: {
+  label: "External Services"
+  supabase: {
+    style.fill: "#f8bbd0"
+    style.border-radius: 10
+    label: "Supabase"
+    auth: {
+      label: "Auth Service"
+    }
+    storage: {
+      label: "Storage Service"
+    }
+  }
+}
+
+# 关系定义
+client -> api: "HTTP/HTTPS"
+api.auth_routes -> services.user_service: "Uses"
+api.meal_plan_routes -> services.meal_plan_service: "Uses"
+api.recipe_routes -> services.recipe_service: "Uses"
+api.user_routes -> services.user_service: "Uses"
+api.recommendation_routes -> services.recommendation_service: "Uses"
+api.recommendation_routes -> services.image_service: "Uses"
+services.recommendation_service -> services.ai_services: "Uses"
+services.user_service -> database.profiles: "Manages"
+services.user_service -> database.preferences: "Manages"
+services.user_service -> database.settings: "Manages"
+services.meal_plan_service -> database.recipes: "Manages"
+services.meal_plan_service -> database.meal_plans: "Manages"
+services.meal_plan_service -> database.favorites: "Manages"
+services.recipe_service -> database.recipes: "Manages"
+services.cache_service -> database: "Caches"
+api -> external.supabase.auth: "Authenticates"
+database -> external.supabase: "Hosted On"
+
+# 数据库关系
+database.meal_plans -> database.recipes: "recipe_id"
+database.meal_plans -> database.profiles: "user_id"
+database.favorites -> database.recipes: "recipe_id"
+database.favorites -> database.profiles: "user_id"
+database.settings -> database.profiles: "user_id"
+database.preferences -> database.profiles: "id"
+database.recipes -> database.profiles: "created_by" 

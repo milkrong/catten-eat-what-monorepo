@@ -1,0 +1,378 @@
+# @host = https://eatwhatapi.cattenbox.com
+@host = http://localhost:3002
+@baseUrl = {{host}}/api
+@auth_token = eyJhbGciOiJIUzI1NiIsImtpZCI6IjJJQXF4OVFvSUhGcnliL1kiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2F2Z2h1amdtcGl3c2tzcmN2dXZlLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJjZDQ3Y2NmNS05MDM2LTQwYmMtOTdmYy1kYzcwZWUwNTE5ZmIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU1MDgxMjA2LCJpYXQiOjE3NTQ3MjEyMDYsImVtYWlsIjoibWlsa3JvbmcxMjFAb3V0bG9vay5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoibWlsa3JvbmcxMjFAb3V0bG9vay5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiY2Q0N2NjZjUtOTAzNi00MGJjLTk3ZmMtZGM3MGVlMDUxOWZiIiwidXNlcm5hbWUiOiJ0ZXN0bmFtZSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzU0NzIxMjA2fV0sInNlc3Npb25faWQiOiIxYjg2NDMzNi1iN2FhLTRjNjItOWRmMS0wZDljNWE3NmMyMTIiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.GflnYXxTx3yVvgr8E2-b6ywC0oDqPJMZboLcf6JoQOo
+@recipeId = 'recipe_id'
+@sessionId = 'session_id'
+### 认证相关 API ###
+
+### 用户注册
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "email",
+  "password": "password",
+  "username": "username"
+}
+
+### 用户登录
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "milkrong121@outlook.com",
+  "password": "Milkkai5315!?!"
+}
+
+### 获取当前用户信息
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{auth_token}}
+
+### 刷新 Token
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer {{auth_token}}
+
+### 用户登出
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{auth_token}}
+
+### 食谱相关 API ###
+
+### 获取食谱列表
+GET {{baseUrl}}/recipes
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### 获取单个食谱
+GET {{baseUrl}}/recipes/1
+Content-Type: application/json
+
+### 创建食谱（需要认证）
+POST {{baseUrl}}/recipes
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "麻婆豆腐",
+  "ingredients": [
+    {
+      "name": "北豆腐",
+      "amount": 500,
+      "unit": "克"
+    },
+    {
+      "name": "牛肉末",
+      "amount": 100,
+      "unit": "克"
+    },
+    {
+      "name": "豆瓣酱",
+      "amount": 2,
+      "unit": "勺"
+    },
+    {
+      "name": "蒜苗",
+      "amount": 3,
+      "unit": "根"
+    },
+    {
+      "name": "生姜",
+      "amount": 5,
+      "unit": "克"
+    },
+    {
+      "name": "大蒜",
+      "amount": 3,
+      "unit": "瓣"
+    },
+    {
+      "name": "辣椒粉",
+      "amount": 1,
+      "unit": "勺"
+    },
+    {
+      "name": "生抽",
+      "amount": 2,
+      "unit": "勺"
+    },
+    {
+      "name": "水淀粉",
+      "amount": 0.5,
+      "unit": "杯"
+    },
+    {
+      "name": "花椒粒",
+      "amount": 8,
+      "unit": "粒"
+    }
+  ],
+  "calories": 2000,
+  "cooking_time": 30,
+  "nutrition_facts": {
+    "protein": 40,
+    "fat": 15,
+    "carbs": 100,
+    "fiber": 8
+  },
+  "steps": [
+    "将北豆腐切成2厘米见方的小块，用开水焯烫后捞出备用。",
+    "蒜苗切段，生姜和大蒜剁碎备用。",
+    "锅中放油烧热，加入牛肉末翻炒至变色。",
+    "加入豆瓣酱、姜蒜末和辣椒粉继续翻炒出红油。",
+    "加入适量水，放入花椒粒煮沸。",
+    "加入焯好的豆腐块，用中小火慢炖5分钟。",
+    "用水淀粉勾芡，最后撒上蒜苗段即可出锅。"
+  ],
+  "cuisine_type": [
+    "川菜"
+  ],
+  "diet_type": [
+    "素食"
+  ]
+}
+
+### 更新食谱（需要认证）
+PUT {{baseUrl}}/recipes/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "改良版红烧肉",
+  "description": "更新后的描述"
+}
+
+### 删除食谱（需要认证）
+DELETE {{baseUrl}}/recipes/1
+Authorization: Bearer {{auth_token}}
+
+### 食谱收藏相关 API ###
+
+### 获取用户的食谱收藏列表
+GET {{baseUrl}}/users/favorites
+Authorization: Bearer {{auth_token}}
+
+### 添加食谱到收藏
+POST {{baseUrl}}/users/favorites/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### 从收藏中移除食谱
+DELETE {{baseUrl}}/users/favorites/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### 餐饮计划相关 API ###
+
+### 获取用户的餐饮计划（需要认证）
+GET {{baseUrl}}/meal-plans?startDate=2024-01-01&endDate=2024-01-07
+Authorization: Bearer {{auth_token}}
+
+### 创建餐饮计划（需要认证）
+POST {{baseUrl}}/meal-plans
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "date": "2024-01-01T12:00:00Z",
+  "meal_type": "lunch",
+  "recipe_id": "recipe_1"
+}
+
+### 更新餐饮计划（需要认证）
+PUT {{baseUrl}}/meal-plans/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "meal_type": "dinner"
+}
+
+### 删除餐饮计划（需要认证）
+DELETE {{baseUrl}}/meal-plans/1
+Authorization: Bearer {{auth_token}}
+
+### 生成餐饮计划
+POST {{baseUrl}}/meal-plans/generate
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "startDate": "2024-01-15T00:00:00Z",
+  "endDate": "2024-01-21T23:59:59Z",
+  "preferences": {
+    "cuisineTypes": ["中餐", "日料"],
+    "dietTypes": ["均衡"],
+    "maxCookingTime": 45,
+    "caloriesPerDay": 2000
+  }
+}
+
+### 推荐相关 API ###
+
+### 获取单餐推荐
+POST {{baseUrl}}/recommendations/single
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "dietType": ["均衡"],
+    "cuisineType": ["中餐"],
+    "allergies": ["西兰花"],
+    "restrictions": ["低蛋白质"],
+    "caloriesMin": 1800,
+    "caloriesMax": 2200,
+    "maxCookingTime": 45,
+    "mealsPerDay": 3
+  },
+  "provider": "dify"
+}
+
+### 获取今日推荐
+GET {{baseUrl}}/recommendations/today
+Authorization: Bearer {{auth_token}}
+
+### 获取相似食谱
+GET {{baseUrl}}/recommendations/similar/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### 获取每日推荐
+POST {{baseUrl}}/recommendations/daily
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "diet_type": ["均衡"],
+    "cuisine_type": ["川菜", "粤菜"],
+    "allergies": [],
+    "restrictions": [],
+    "calories_min": 1800,
+    "calories_max": 2200,
+    "max_cooking_time": 45,
+    "meals_per_day": 3
+  },
+  "provider": "ollama"
+}
+
+### 获取每周推荐
+POST {{baseUrl}}/recommendations/weekly
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "diet_type": ["均衡"],
+    "cuisine_type": ["中餐", "西餐", "日料"],
+    "allergies": [],
+    "restrictions": [],
+    "calories_min": 1800,
+    "calories_max": 2200,
+    "max_cooking_time": 45,
+    "meals_per_day": 3
+  },
+  "provider": "ollama"
+}
+
+### 获取单餐推荐（流式响应）
+POST {{baseUrl}}/recommendations/single/stream
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "diet_type": ["素食"],
+    "cuisine_type": ["川菜"],
+    "allergies": ["花生"],
+    "restrictions": ["无麸质"],
+    "calories_min": 1800,
+    "calories_max": 2200,
+    "max_cooking_time": 45,
+    "meals_per_day": 3
+  },
+  "provider": "deepseek"
+}
+
+### 获取单餐推荐图片
+POST {{baseUrl}}/recommendations/generate-image
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "recipeName": "麻婆豆腐",
+  "description": "麻婆豆腐是一道经典的川菜，以其麻辣鲜香而闻名。",
+  "image_size": "512x512"
+}
+
+### 用户相关 API ###
+
+### 获取用户完整信息（包含个人资料、偏好和设置）
+GET {{baseUrl}}/users/info
+Authorization: Bearer {{auth_token}}
+
+### 获取用户个人资料（需要认证）
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{auth_token}}
+
+### 更新用户个人资料（需要认证）
+PUT {{baseUrl}}/users/profile
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "username": "newusername",
+  "avatar_url": "https://example.com/avatar.jpg"
+}
+
+### 获取用户偏好设置（需要认证）
+GET {{baseUrl}}/users/preferences
+Authorization: Bearer {{auth_token}}
+
+### 更新用户偏好设置（需要认证）
+PUT {{baseUrl}}/users/preferences
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "cuisineType": ["chinese", "japanese"],
+  "dietType": ["vegetarian"],
+  "maxCookingTime": 45,
+  "caloriesPerMeal": 500
+}
+
+### 获取用户设置（需要认证）
+GET {{baseUrl}}/users/settings
+Authorization: Bearer {{auth_token}}
+
+### 更新用户设置（需要认证）
+PUT {{baseUrl}}/users/settings
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "llm_service": "deepseek"
+}
+
+### 系统管理 API ###
+
+### 获取缓存状态
+GET {{baseUrl}}/admin/cache/status
+Authorization: Bearer {{auth_token}}
+
+### 手动触发缓存预热
+POST {{baseUrl}}/admin/cache/warmup
+Authorization: Bearer {{auth_token}}
+
+### 获取缓存预热会话列表
+GET {{baseUrl}}/admin/cache/warmup/sessions
+Authorization: Bearer {{auth_token}}
+
+### 获取特定缓存预热会话详情
+GET {{baseUrl}}/admin/cache/warmup/sessions/{{sessionId}}
+Authorization: Bearer {{auth_token}}
+
+### 获取缓存预热概要信息
+GET {{baseUrl}}/admin/cache/warmup/summary
+Authorization: Bearer {{auth_token}}
+
+### 健康检查
+GET {{baseUrl}}/health

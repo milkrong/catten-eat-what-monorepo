@@ -1,0 +1,15 @@
+{
+  "name": "catten-eat-what-monorepo",
+  "private": true,
+  "packageManager": "bun@1.2.4",
+  "workspaces": [
+    "catten-eat-what-service",
+    "eat-what-app"
+  ],
+  "scripts": {
+    "build": "bun run -g build",
+    "dev": "bun run -g dev",
+    "test": "bun run -g test"
+  }
+}
+

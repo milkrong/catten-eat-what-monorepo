@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>猫咪吃什么 - 膳食计划</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        gap: 40px;
+      }
+
+      .phone-container {
+        width: 375px;
+        height: 812px;
+        margin: 20px auto;
+        background-color: white;
+        border-radius: 40px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 10px solid #333;
+      }
+
+      .status-bar {
+        height: 44px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        font-size: 12px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+      }
+
+      .status-bar .time {
+        font-weight: bold;
+      }
+
+      .header {
+        padding: 15px;
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+      }
+
+      .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .page-title .add-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 16px;
+        background-color: #ff6b6b;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      .main-content {
+        height: calc(100% - 44px - 70px - 60px);
+        overflow-y: auto;
+        padding: 0;
+      }
+
+      .tab-bar {
+        height: 70px;
+        background-color: #fff;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-top: 1px solid #eee;
+      }
+
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+        width: 25%;
+        color: #999;
+        padding: 8px 0;
+      }
+
+      .tab-item.active {
+        color: #ff6b6b;
+      }
+
+      .tab-icon {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .week-selector {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .current-week {
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .week-nav button {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 22px;
+        cursor: pointer;
+        padding: 0 5px;
+      }
+
+      .calendar-row {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+
+      .calendar-day {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .day-name {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+      }
+
+      .day-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: #333;
+        background-color: #f5f5f5;
+      }
+
+      .calendar-day.active .day-name {
+        color: #ff6b6b;
+      }
+
+      .calendar-day.active .day-circle {
+        background-color: #ff6b6b;
+        color: white;
+      }
+
+      .calendar-day.completed .day-circle {
+        background-color: #eee;
+        color: #999;
+      }
+
+      .calendar-day.completed .day-circle::after {
+        content: "✓";
+        position: absolute;
+        font-size: 10px;
+        color: #999;
+        bottom: -5px;
+        right: 10px;
+      }
+
+      .nutrition-summary {
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 15px;
+        margin: 0 15px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .summary-title {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .summary-detail {
+        font-size: 13px;
+        color: #999;
+      }
+
+      .nutrition-stats {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .nutrition-item {
+        flex-basis: 30%;
+        text-align: center;
+      }
+
+      .nutrition-value {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .nutrition-label {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .progress-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        background-color: #f5f5f5;
+        position: relative;
+        margin: 0 auto 10px;
+      }
+
+      .progress-fill {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        clip: rect(0, 30px, 60px, 0);
+        background-color: #ff6b6b;
+        position: absolute;
+        transform: rotate(126deg);
+      }
+
+      .progress-center {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .meal-section {
+        padding: 0 15px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .meal-card {
+        background-color: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .meal-header {
+        background-color: #f8f8f8;
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .meal-time {
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .meal-time span {
+        font-size: 12px;
+        color: #999;
+        font-weight: normal;
+        margin-left: 5px;
+      }
+
+      .meal-calories {
+        font-size: 13px;
+        color: #666;
+      }
+
+      .meal-content {
+        display: flex;
+        padding: 15px;
+      }
+
+      .meal-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        background-color: #eee;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .meal-info {
+        margin-left: 15px;
+        flex-grow: 1;
+      }
+
+      .meal-name {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .meal-desc {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .meal-meta {
+        display: flex;
+        font-size: 12px;
+        color: #999;
+      }
+
+      .meal-meta span {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+      }
+
+      .meal-meta i {
+        font-size: 14px;
+        margin-right: 4px;
+      }
+
+      .meal-placeholder {
+        display: flex;
+        padding: 15px;
+        justify-content: center;
+        align-items: center;
+        color: #999;
+        font-size: 14px;
+      }
+
+      .meal-placeholder i {
+        margin-right: 5px;
+        font-size: 18px;
+      }
+
+      .empty-box {
+        height: 20px;
+      }
+
+      /* Utility classes */
+      .icon {
+        font-family: "Material Icons";
+        font-style: normal;
+      }
+
+      /* Modal styles */
+      .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-container {
+        width: 90%;
+        max-height: 80%;
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .modal-header {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .modal-close {
+        font-size: 24px;
+        color: #999;
+        cursor: pointer;
+      }
+
+      .modal-body {
+        padding: 15px;
+        overflow-y: auto;
+      }
+
+      .modal-footer {
+        padding: 15px;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: white;
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .time-picker {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .time-picker .form-input {
+        width: 48%;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn-primary {
+        background-color: #ff6b6b;
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #f5f5f5;
+        color: #666;
+        margin-right: 10px;
+      }
+
+      .meal-type-selector {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      .meal-type-option {
+        flex-basis: 25%;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .meal-type-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 5px;
+      }
+
+      .meal-type-option.active .meal-type-icon {
+        background-color: #ff6b6b;
+        color: white;
+      }
+
+      .meal-type-option.active .meal-type-name {
+        color: #ff6b6b;
+        font-weight: bold;
+      }
+
+      .meal-type-name {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .recipe-search {
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .recipe-search-icon {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: #999;
+      }
+
+      .recipe-search-input {
+        width: 100%;
+        padding: 10px 10px 10px 35px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .recipe-list {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .recipe-item {
+        display: flex;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+      }
+
+      .recipe-item:hover {
+        background-color: #f9f9f9;
+      }
+
+      .recipe-item-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        background-color: #eee;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+      }
+
+      .recipe-item-info {
+        margin-left: 10px;
+        flex-grow: 1;
+      }
+
+      .recipe-item-name {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
+
+      .recipe-item-desc {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .recipe-item-meta {
+        display: flex;
+        font-size: 11px;
+        color: #999;
+        margin-top: 5px;
+      }
+
+      .recipe-item-meta span {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+      }
+
+      .recipe-item-meta i {
+        font-size: 12px;
+        margin-right: 3px;
+      }
+
+      .nutrition-input-group {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .nutrition-input-group .form-group {
+        width: 30%;
+      }
+
+      .image-upload {
+        width: 100%;
+        height: 120px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 15px;
+      }
+
+      .image-upload-icon {
+        font-size: 24px;
+        color: #999;
+        margin-bottom: 5px;
+      }
+
+      .image-upload-text {
+        font-size: 12px;
+        color: #999;
+      }
+
+      .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      .tag {
+        background-color: #f5f5f5;
+        color: #666;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .tag.active {
+        background-color: #ff6b6b;
+        color: white;
+      }
+
+      .tag i {
+        font-size: 14px;
+        margin-right: 3px;
+      }
+    </style>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="phone-container">
+      <div class="status-bar">
+        <div class="time">12:30</div>
+        <div class="icons">
+          <span class="icon">signal_cellular_alt</span>
+          <span class="icon">wifi</span>
+          <span class="icon">battery_full</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="page-title">
+          <span>膳食计划</span>
+          <div class="add-btn">
+            <i class="icon">add</i>
+          </div>
+        </div>
+
+        <div class="week-selector">
+          <div class="current-week">2023年6月12日 - 6月18日</div>
+          <div class="week-nav">
+            <button class="icon">chevron_left</button>
+            <button class="icon">chevron_right</button>
+          </div>
+        </div>
+
+        <div class="calendar-row">
+          <div class="calendar-day completed">
+            <div class="day-name">一</div>
+            <div class="day-circle">12</div>
+          </div>
+          <div class="calendar-day completed">
+            <div class="day-name">二</div>
+            <div class="day-circle">13</div>
+          </div>
+          <div class="calendar-day completed">
+            <div class="day-name">三</div>
+            <div class="day-circle">14</div>
+          </div>
+          <div class="calendar-day active">
+            <div class="day-name">四</div>
+            <div class="day-circle">15</div>
+          </div>
+          <div class="calendar-day">
+            <div class="day-name">五</div>
+            <div class="day-circle">16</div>
+          </div>
+          <div class="calendar-day">
+            <div class="day-name">六</div>
+            <div class="day-circle">17</div>
+          </div>
+          <div class="calendar-day">
+            <div class="day-name">日</div>
+            <div class="day-circle">18</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="nutrition-summary">
+          <div class="summary-header">
+            <div class="summary-title">今日营养摄入</div>
+            <div class="summary-detail">查看详情 ></div>
+          </div>
+
+          <div class="nutrition-stats">
+            <div class="nutrition-item">
+              <div class="progress-circle">
+                <div class="progress-fill"></div>
+                <div class="progress-center">70%</div>
+              </div>
+              <div class="nutrition-value">1400</div>
+              <div class="nutrition-label">卡路里</div>
+            </div>
+
+            <div class="nutrition-item">
+              <div class="nutrition-value">88g</div>
+              <div class="nutrition-label">蛋白质</div>
+            </div>
+
+            <div class="nutrition-item">
+              <div class="nutrition-value">42g</div>
+              <div class="nutrition-label">脂肪</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="meal-section">
+          <div class="section-title">今日膳食</div>
+
+          <div class="meal-card">
+            <div class="meal-header">
+              <div class="meal-time">早餐 <span>7:00 - 8:00</span></div>
+              <div class="meal-calories">320卡</div>
+            </div>
+
+            <div class="meal-content">
+              <div
+                class="meal-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1494597564530-871f2b93ac55?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="meal-info">
+                <div class="meal-name">牛油果全麦三明治</div>
+                <div class="meal-desc">
+                  富含健康脂肪和膳食纤维，提供持久能量
+                </div>
+                <div class="meal-meta">
+                  <span><i class="icon">schedule</i>15分钟</span>
+                  <span><i class="icon">eco</i>素食</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="meal-card">
+            <div class="meal-header">
+              <div class="meal-time">午餐 <span>12:00 - 13:00</span></div>
+              <div class="meal-calories">450卡</div>
+            </div>
+
+            <div class="meal-content">
+              <div
+                class="meal-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="meal-info">
+                <div class="meal-name">藜麦鸡胸沙拉</div>
+                <div class="meal-desc">高蛋白低脂，搭配多种蔬菜，营养均衡</div>
+                <div class="meal-meta">
+                  <span><i class="icon">schedule</i>20分钟</span>
+                  <span><i class="icon">fitness_center</i>高蛋白</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="meal-card">
+            <div class="meal-header">
+              <div class="meal-time">加餐 <span>15:30 - 16:30</span></div>
+              <div class="meal-calories">150卡</div>
+            </div>
+
+            <div class="meal-placeholder">
+              <i class="icon">add_circle_outline</i>
+              <span>添加加餐</span>
+            </div>
+          </div>
+
+          <div class="meal-card">
+            <div class="meal-header">
+              <div class="meal-time">晚餐 <span>18:00 - 19:00</span></div>
+              <div class="meal-calories">480卡</div>
+            </div>
+
+            <div class="meal-content">
+              <div
+                class="meal-image"
+                style="
+                  background-image: url('https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                "
+              ></div>
+              <div class="meal-info">
+                <div class="meal-name">清蒸鲈鱼配西兰花</div>
+                <div class="meal-desc">
+                  低脂肪高蛋白，搭配绿色蔬菜，富含维生素
+                </div>
+                <div class="meal-meta">
+                  <span><i class="icon">schedule</i>30分钟</span>
+                  <span><i class="icon">waves</i>高omega-3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-box"></div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item">
+          <i class="icon tab-icon">home</i>
+          <span>首页</span>
+        </div>
+        <div class="tab-item">
+          <i class="icon tab-icon">restaurant_menu</i>
+          <span>食谱</span>
+        </div>
+        <div class="tab-item active">
+          <i class="icon tab-icon">calendar_today</i>
+          <span>计划</span>
+        </div>
+        <div class="tab-item">
+          <i class="icon tab-icon">person</i>
+          <span>我的</span>
+        </div>
+      </div>
+
+      <!-- 添加膳食的弹窗 -->
+      <div class="modal-overlay" id="addMealModal">
+        <div class="modal-container">
+          <div class="modal-header">
+            <div class="modal-title">添加膳食</div>
+            <div class="modal-close" id="closeModal">
+              <i class="icon">close</i>
+            </div>
+          </div>
+          <div class="modal-body">
+            <!-- 膳食类型选择器 -->
+            <div class="form-group">
+              <label class="form-label">膳食类型</label>
+              <div class="meal-type-selector">
+                <div class="meal-type-option active" data-type="breakfast">
+                  <div class="meal-type-icon">
+                    <i class="icon">free_breakfast</i>
+                  </div>
+                  <div class="meal-type-name">早餐</div>
+                </div>
+                <div class="meal-type-option" data-type="lunch">
+                  <div class="meal-type-icon">
+                    <i class="icon">lunch_dining</i>
+                  </div>
+                  <div class="meal-type-name">午餐</div>
+                </div>
+                <div class="meal-type-option" data-type="snack">
+                  <div class="meal-type-icon">
+                    <i class="icon">bakery_dining</i>
+                  </div>
+                  <div class="meal-type-name">加餐</div>
+                </div>
+                <div class="meal-type-option" data-type="dinner">
+                  <div class="meal-type-icon">
+                    <i class="icon">dinner_dining</i>
+                  </div>
+                  <div class="meal-type-name">晚餐</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 时间选择 -->
+            <div class="form-group">
+              <label class="form-label">时间段</label>
+              <div class="time-picker">
+                <input type="time" class="form-input" value="07:00" />
+                <input type="time" class="form-input" value="08:00" />
+              </div>
+            </div>
+
+            <!-- 搜索食谱 -->
+            <div class="form-group">
+              <label class="form-label">选择食谱</label>
+              <div class="recipe-search">
+                <i class="icon recipe-search-icon">search</i>
+                <input
+                  type="text"
+                  class="recipe-search-input"
+                  placeholder="搜索食谱..."
+                />
+              </div>
+
+              <div class="recipe-list">
+                <div class="recipe-item">
+                  <div
+                    class="recipe-item-image"
+                    style="
+                      background-image: url('https://images.unsplash.com/photo-1494597564530-871f2b93ac55?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                    "
+                  ></div>
+                  <div class="recipe-item-info">
+                    <div class="recipe-item-name">牛油果全麦三明治</div>
+                    <div class="recipe-item-desc">
+                      富含健康脂肪和膳食纤维，提供持久能量
+                    </div>
+                    <div class="recipe-item-meta">
+                      <span><i class="icon">schedule</i>15分钟</span>
+                      <span><i class="icon">eco</i>素食</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="recipe-item">
+                  <div
+                    class="recipe-item-image"
+                    style="
+                      background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                    "
+                  ></div>
+                  <div class="recipe-item-info">
+                    <div class="recipe-item-name">藜麦鸡胸沙拉</div>
+                    <div class="recipe-item-desc">
+                      高蛋白低脂，搭配多种蔬菜，营养均衡
+                    </div>
+                    <div class="recipe-item-meta">
+                      <span><i class="icon">schedule</i>20分钟</span>
+                      <span><i class="icon">fitness_center</i>高蛋白</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="recipe-item">
+                  <div
+                    class="recipe-item-image"
+                    style="
+                      background-image: url('https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+                    "
+                  ></div>
+                  <div class="recipe-item-info">
+                    <div class="recipe-item-name">清蒸鲈鱼配西兰花</div>
+                    <div class="recipe-item-desc">
+                      低脂肪高蛋白，搭配绿色蔬菜，富含维生素
+                    </div>
+                    <div class="recipe-item-meta">
+                      <span><i class="icon">schedule</i>30分钟</span>
+                      <span><i class="icon">waves</i>高omega-3</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 或者创建新食谱 -->
+            <div class="form-group">
+              <label class="form-label">或者创建新食谱</label>
+              <input
+                type="text"
+                class="form-input"
+                placeholder="食谱名称"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">描述</label>
+              <textarea
+                class="form-textarea"
+                placeholder="描述这道食谱的特点和营养价值..."
+              ></textarea>
+            </div>
+
+            <!-- 上传图片 -->
+            <div class="form-group">
+              <label class="form-label">食物图片</label>
+              <div class="image-upload">
+                <i class="icon image-upload-icon">add_photo_alternate</i>
+                <div class="image-upload-text">点击上传图片</div>
+              </div>
+            </div>
+
+            <!-- 营养信息 -->
+            <div class="form-group">
+              <label class="form-label">营养信息</label>
+              <div class="nutrition-input-group">
+                <div class="form-group">
+                  <input
+                    type="number"
+                    class="form-input"
+                    placeholder="卡路里"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="number"
+                    class="form-input"
+                    placeholder="蛋白质(g)"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="number"
+                    class="form-input"
+                    placeholder="脂肪(g)"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- 标签 -->
+            <div class="form-group">
+              <label class="form-label">标签</label>
+              <div class="tag-container">
+                <div class="tag">
+                  <i class="icon">eco</i>素食
+                </div>
+                <div class="tag">
+                  <i class="icon">fitness_center</i>高蛋白
+                </div>
+                <div class="tag">
+                  <i class="icon">waves</i>高omega-3
+                </div>
+                <div class="tag">
+                  <i class="icon">bolt</i>低碳水
+                </div>
+                <div class="tag">
+                  <i class="icon">local_fire_department</i>低脂
+                </div>
+                <div class="tag">
+                  <i class="icon">spa</i>无麸质
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelAddMeal">取消</button>
+            <button class="btn btn-primary" id="confirmAddMeal">添加</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const addBtn = document.querySelector('.add-btn');
+      const modal = document.getElementById('addMealModal');
+      const closeModal = document.getElementById('closeModal');
+      const cancelBtn = document.getElementById('cancelAddMeal');
+      const confirmBtn = document.getElementById('confirmAddMeal');
+      const mealTypeOptions = document.querySelectorAll('.meal-type-option');
+      const tagOptions = document.querySelectorAll('.tag');
+      const recipeItems = document.querySelectorAll('.recipe-item');
+
+      // 打开模态框
+      addBtn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+
+      // 关闭模态框的多种方式
+      function closeModalFunc() {
+        modal.style.display = 'none';
+      }
+
+      closeModal.addEventListener('click', closeModalFunc);
+      cancelBtn.addEventListener('click', closeModalFunc);
+      
+      // 点击模态框外部关闭
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModalFunc();
+        }
+      });
+
+      // 膳食类型选择
+      mealTypeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          // 移除所有active类
+          mealTypeOptions.forEach(opt => opt.classList.remove('active'));
+          // 给当前点击的选项添加active类
+          option.classList.add('active');
+        });
+      });
+
+      // 标签选择
+      tagOptions.forEach(tag => {
+        tag.addEventListener('click', () => {
+          tag.classList.toggle('active');
+        });
+      });
+
+      // 食谱选择
+      recipeItems.forEach(item => {
+        item.addEventListener('click', () => {
+          // 移除所有选中状态
+          recipeItems.forEach(ri => ri.style.backgroundColor = '');
+          // 设置当前选中状态
+          item.style.backgroundColor = '#f0f0f0';
+        });
+      });
+
+      // 添加膳食确认
+      confirmBtn.addEventListener('click', () => {
+        // 这里可以添加表单验证和数据处理逻辑
+        
+        // 模拟添加成功
+        alert('膳食添加成功！');
+        closeModalFunc();
+      });
+    </script>
+  </body>
+</html>

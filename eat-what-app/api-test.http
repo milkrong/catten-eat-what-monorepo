@@ -1,0 +1,375 @@
+@host = http://localhost:3002
+@baseUrl = {{host}}/api
+@auth_token = eyJhbGciOiJIUzI1NiIsImtpZCI6IjJJQXF4OVFvSUhGcnliL1kiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2F2Z2h1amdtcGl3c2tzcmN2dXZlLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJjZDQ3Y2NmNS05MDM2LTQwYmMtOTdmYy1kYzcwZWUwNTE5ZmIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU1MTYyMjQ1LCJpYXQiOjE3NTQ4MDIyNDUsImVtYWlsIjoibWlsa3JvbmcxMjFAb3V0bG9vay5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoibWlsa3JvbmcxMjFAb3V0bG9vay5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiY2Q0N2NjZjUtOTAzNi00MGJjLTk3ZmMtZGM3MGVlMDUxOWZiIiwidXNlcm5hbWUiOiJ0ZXN0bmFtZSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzU0ODAyMjQ1fV0sInNlc3Npb25faWQiOiJjMDNiMTliOC0zMDBlLTRiZGYtYjJmMS0zMzVjNTVkNjZlNDMiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.C3BHasbgx2YW_Q75qVVScfYxRs4HxqBETgO3KCXaRoM
+@recipeId = 4d499f44-d762-414e-bd48-f58c96d38245
+@mealPlanId = 00000000-0000-0000-0000-000000000000
+@sessionId = 00000000-0000-0000-0000-000000000000
+
+### Health
+GET {{baseUrl}}/health
+
+### =====================
+### Auth
+### =====================
+
+### Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "Password123!",
+  "username": "demo_user"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "milkrong121@outlook.com",
+  "password": "Milkkai5315!?!"
+}
+
+### Refresh session
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer {{auth_token}}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{auth_token}}
+
+### =====================
+### Recipes (protected)
+### =====================
+
+### List recipes
+# Query params: page, limit, cuisineType, dietType (comma-separated), maxCookingTime, name, minCalories, maxCalories, sortBy, sortOrder
+GET {{baseUrl}}/recipes?page=1&limit=10&sortBy=createdAt&sortOrder=desc
+Authorization: Bearer {{auth_token}}
+
+### Get recipe by id
+GET {{baseUrl}}/recipes/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### Create recipe
+POST {{baseUrl}}/recipes
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Mapo Tofu",
+  "description": "Classic Sichuan dish",
+  "ingredients": [
+    { "name": "Tofu", "amount": 500, "unit": "g" },
+    { "name": "Minced beef", "amount": 100, "unit": "g" }
+  ],
+  "steps": [
+    { "order": 1, "description": "Cut tofu into cubes" },
+    { "order": 2, "description": "Stir-fry beef with doubanjiang" }
+  ],
+  "calories": 620,
+  "cookingTime": 30,
+  "nutritionFacts": { "protein": 40, "carbs": 50, "fat": 25, "fiber": 6 },
+  "cuisineType": ["sichuan"],
+  "dietType": ["balanced"],
+  "img": "https://example.com/image.webp"
+}
+
+### Update recipe
+PUT {{baseUrl}}/recipes/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Mapo Tofu (Less Spicy)",
+  "description": "Reduced chili",
+  "ingredients": [
+    { "name": "Tofu", "amount": 500, "unit": "g" }
+  ],
+  "steps": [
+    { "order": 1, "description": "Cut tofu into cubes" }
+  ],
+  "calories": 580,
+  "cookingTime": 28,
+  "nutritionFacts": { "protein": 36, "carbs": 48, "fat": 22, "fiber": 5 },
+  "cuisineType": ["sichuan"],
+  "dietType": ["balanced"]
+}
+
+### Delete recipe
+DELETE {{baseUrl}}/recipes/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### =====================
+### Users (protected)
+### =====================
+
+### Get full user info
+GET {{baseUrl}}/users/info
+Authorization: Bearer {{auth_token}}
+
+### Get profile
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{auth_token}}
+
+### Create profile
+POST {{baseUrl}}/users/profile
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "username": "demo_user",
+  "bio": "Food lover",
+  "avatarUrl": "https://example.com/avatar.webp"
+}
+
+### Update profile
+PUT {{baseUrl}}/users/profile
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "username": "demo_user_2",
+  "avatarUrl": "https://example.com/avatar2.webp"
+}
+
+### Get favorites
+GET {{baseUrl}}/users/favorites
+Authorization: Bearer {{auth_token}}
+
+### Add favorite
+POST {{baseUrl}}/users/favorites/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### Remove favorite
+DELETE {{baseUrl}}/users/favorites/{{recipeId}}
+Authorization: Bearer {{auth_token}}
+
+### Get preferences
+GET {{baseUrl}}/users/preferences
+Authorization: Bearer {{auth_token}}
+
+### Update preferences
+PUT {{baseUrl}}/users/preferences
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "dietType": ["balanced"],
+  "cuisineType": ["sichuan", "cantonese"],
+  "allergies": ["peanut"],
+  "restrictions": ["gluten-free"],
+  "caloriesMin": 1600,
+  "caloriesMax": 2200,
+  "maxCookingTime": 45
+}
+
+### Get settings
+GET {{baseUrl}}/users/settings
+Authorization: Bearer {{auth_token}}
+
+### Update settings
+PUT {{baseUrl}}/users/settings
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "llmService": "deepseek",
+  "isPaid": true
+}
+
+### Upload avatar (image/webp recommended)
+POST {{baseUrl}}/users/avatar
+Authorization: Bearer {{auth_token}}
+Content-Type: multipart/form-data
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.webp"
+Content-Type: image/webp
+
+< ./docs/architecture.svg
+------WebKitFormBoundary--
+
+### =====================
+### Meal Plans (protected)
+### =====================
+
+### Get meal plans in range
+GET {{baseUrl}}/meal-plans?startDate=2025-01-01T00:00:00.000Z&endDate=2025-01-07T23:59:59.999Z
+Authorization: Bearer {{auth_token}}
+
+### Create meal plan
+POST {{baseUrl}}/meal-plans
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "date": "2025-01-02T12:00:00.000Z",
+  "mealType": "lunch",
+  "recipeId": "{{recipeId}}"
+}
+
+### Update meal plan
+PUT {{baseUrl}}/meal-plans/{{mealPlanId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "date": "2025-01-03T12:00:00.000Z",
+  "mealType": "dinner",
+  "recipeId": "{{recipeId}}"
+}
+
+### Delete meal plan
+DELETE {{baseUrl}}/meal-plans/{{mealPlanId}}
+Authorization: Bearer {{auth_token}}
+
+### Generate meal plans
+POST {{baseUrl}}/meal-plans/generate
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "startDate": "2025-01-01T00:00:00.000Z",
+  "endDate": "2025-01-07T23:59:59.999Z",
+  "preferences": {
+    "cuisineTypes": ["sichuan", "japanese"],
+    "dietTypes": ["balanced"],
+    "maxCookingTime": 45,
+    "caloriesPerDay": 2000
+  }
+}
+
+### =====================
+### Recommendations (protected + payment check)
+### =====================
+
+### Single meal recommendation
+POST {{baseUrl}}/recommendations/single
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "dietType": ["balanced"],
+    "cuisineType": ["sichuan"],
+    "allergies": ["broccoli"],
+    "restrictions": ["low-protein"],
+    "caloriesMin": 1800,
+    "caloriesMax": 2200,
+    "maxCookingTime": 45
+  },
+  "provider": "dify"
+}
+
+### Streaming single meal recommendation (SSE)
+POST {{baseUrl}}/recommendations/single/stream
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "dietType": ["vegetarian"],
+    "cuisineType": ["sichuan"],
+    "allergies": ["peanut"],
+    "restrictions": ["gluten-free"],
+    "caloriesMin": 1600,
+    "caloriesMax": 2000,
+    "maxCookingTime": 30
+  },
+  "provider": "deepseek"
+}
+
+### Daily recommendation
+POST {{baseUrl}}/recommendations/daily
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "dietType": ["balanced"],
+    "cuisineType": ["cantonese", "sichuan"],
+    "allergies": [],
+    "restrictions": [],
+    "caloriesMin": 1800,
+    "caloriesMax": 2200,
+    "maxCookingTime": 45
+  },
+  "provider": "deepseek"
+}
+
+### Weekly recommendation
+POST {{baseUrl}}/recommendations/weekly
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "preferences": {
+    "dietType": ["balanced"],
+    "cuisineType": ["chinese", "western", "japanese"],
+    "allergies": [],
+    "restrictions": [],
+    "caloriesMin": 1800,
+    "caloriesMax": 2200,
+    "maxCookingTime": 45
+  },
+  "provider": "deepseek"
+}
+
+### Generate recipe image
+POST {{baseUrl}}/recommendations/generate-image
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "recipeName": "Mapo Tofu",
+  "description": "Spicy tofu with minced beef",
+  "image_size": "512x512"
+}
+
+### Today recommendations (vector-based)
+GET {{baseUrl}}/recommendations/today?limit=10&page=1
+Authorization: Bearer {{auth_token}}
+
+### Similar recipes (vector-based)
+GET {{baseUrl}}/recommendations/similar/{{recipeId}}?limit=5
+Authorization: Bearer {{auth_token}}
+
+### =====================
+### Admin
+### =====================
+
+### Cache status
+GET {{baseUrl}}/admin/cache/status
+
+### Trigger cache warmup
+POST {{baseUrl}}/admin/cache/warmup
+
+### Warmup sessions
+GET {{baseUrl}}/admin/cache/warmup/sessions?limit=10
+
+### Warmup session detail
+GET {{baseUrl}}/admin/cache/warmup/sessions/{{sessionId}}
+
+### Warmup summary
+GET {{baseUrl}}/admin/cache/warmup/summary
+
+### Import recipes from URL
+POST {{baseUrl}}/admin/recipes/import/url
+Content-Type: application/json
+
+{
+  "url": "https://example.com/recipes.xlsx"
+}
+
+### Import recipes from Excel (multipart/form-data)
+POST {{baseUrl}}/admin/recipes/import/excel
+Content-Type: multipart/form-data
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="recipes.xlsx"
+Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+< ./docs/sample.xlsx
+------WebKitFormBoundary--
