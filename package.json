@@ -8,8 +8,9 @@
   ],
   "scripts": {
     "build": "bun run -g build",
-    "dev": "bun run -g dev",
-    "test": "bun run -g test"
+    "dev": "bash scripts/dev-all.sh",
+    "test": "bun run -g test",
+    "dev:all": "bash scripts/dev-all.sh"
   }
 }
 
